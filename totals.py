@@ -4,6 +4,8 @@ import logging
 from tqdm import tqdm
 import pandas as pd
 from datetime import date
+from config import *
+
 
 class Virus:
     def __init__(self,
@@ -64,7 +66,7 @@ class Virus:
         text2 = []
         result = []
         for i in tqdm(range(len(tmp))):
-            time.sleep(16)
+            time.sleep(5)
             text.append((self.__searching(tmp[i])))
         for i in tqdm(range(len(text))):
             if text[i] == 'error':
@@ -89,12 +91,11 @@ class Virus:
         return self.result 
 
 if __name__ == '__main__':
-    with open('apikey2') as file:
-        my_apikey = str(file.read().replace(' ',''))
-    my_apikey = ''
-    print(my_apikey)
+    #with open('apikey2.txt') as file:
+    #    my_apikey = file.read()
+    my_apikey = apikey2
     filepath  = f'{date.today()}.csv'
-    df = pd.read_csv(filepath) 
+    df = pd.read_csv(filepath).head(1) 
     virus=Virus(src="src_ip" , dest="dest_ip",df= df,mykey=my_apikey)
     result = virus.detect()
     result.to_csv(f'detect{filepath}',index=False)

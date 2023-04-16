@@ -1,3 +1,5 @@
 *.txt
 *.csv
 apikey*.*
+config.py
+config*.*
