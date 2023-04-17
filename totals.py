@@ -4,8 +4,6 @@ import logging
 from tqdm import tqdm
 import pandas as pd
 from datetime import date
-from config import *
-
 
 class Virus:
     def __init__(self,
@@ -66,7 +64,7 @@ class Virus:
         text2 = []
         result = []
         for i in tqdm(range(len(tmp))):
-            time.sleep(5)
+            time.sleep(16) #1건당 탐지 시간 
             text.append((self.__searching(tmp[i])))
         for i in tqdm(range(len(text))):
             if text[i] == 'error':
@@ -85,17 +83,18 @@ class Virus:
         time.sleep(30)
         self.result['dest_result'] = self.__detect_preprocessing(self.dest_ip)
         self.result['result'] =  self.result['src_result'].apply(lambda x : str(x)) + self.result['dest_result'].apply(lambda x : str(x))
-        self.result['virus_detect'] = df['result'].apply(lambda x : True if x != '[[[], [], []]][[[], [], []]]' else  
-                                                                      x  if 'error' in x else False)
+        self.result['virus_detect'] = self.result['result'].apply(lambda x : False if x == '[[[], [], []]][[[], [], []]]' else  
+                                                                      x  if 'error' in x else True)
         del self.result['result']
         return self.result 
 
 if __name__ == '__main__':
+    from config import *
     #with open('apikey2.txt') as file:
     #    my_apikey = file.read()
     my_apikey = apikey2
     filepath  = f'{date.today()}.csv'
     df = pd.read_csv(filepath).head(1) 
-    virus=Virus(src="src_ip" , dest="dest_ip",df= df,mykey=my_apikey)
+    Virus(src="src_ip" , dest="dest_ip",df= df,mykey=my_apikey).detect()
     result = virus.detect()
     result.to_csv(f'detect{filepath}',index=False)
